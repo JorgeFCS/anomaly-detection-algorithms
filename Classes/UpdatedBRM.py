@@ -43,6 +43,9 @@ class UpdatedBRM(BRM, object):
     def fit(self, func, X, y=None):
         """
         Overriding BRM's fit method.
+
+        Converting it to a high-order function that can receive any
+        sklearn's pairwise metric functions.
         """
         # Check that X and y have correct shape.
         if y is not None:
@@ -72,13 +75,15 @@ class UpdatedBRM(BRM, object):
     def score_samples(self, X, func):
         """
         Overriding the score_samples method.
+
+        Converting it to a high-order function that can receive any
+        sklearn's pairwise metric functions.
         """
         X_test = np.array(X)
         result = []
         batch_size = 100
         for i in range(min(len(X_test), batch_size), len(X_test) + batch_size, batch_size):
             current_X_test = X_test[[j for j in range(max(0, i-batch_size), min(i, len(X_test)))]]
-            #current_similarity = np.average([np.exp(-np.power(np.amin(euclidean_distances(current_X_test, self._centers[i]), axis=1)/self._max_dissimilarity, 2)/(self._sd[i])) for i in range(len(self._centers))], axis=0)
             current_similarity = np.average([np.exp(-np.power(np.amin(func(current_X_test, self._centers[i]), axis=1)/self._max_dissimilarity, 2)/(self._sd[i])) for i in range(len(self._centers))], axis=0)
             result = result + [j for j in list(map(self._evaluate, current_similarity))]
         return result
