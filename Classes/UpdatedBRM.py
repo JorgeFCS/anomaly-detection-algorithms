@@ -40,7 +40,7 @@ class UpdatedBRM(BRM, object):
                      use_past_even_queue=False, max_event_count=3, alpha=0.5,
                      user_threshold=95)
 
-    def fit(self, X, y=None):
+    def fit(self, func, X, y=None):
         """
         Overriding BRM's fit method.
         """
@@ -65,10 +65,11 @@ class UpdatedBRM(BRM, object):
         for i in range(0, self.classifier_count):
             centers = random.choices(list_instances, k=sampleSize)
             self._centers = np.insert(self._centers, i, centers, axis=0)
-            self._sd = np.insert(self._sd, i, 2*(np.mean(euclidean_distances(centers, centers))/self._max_dissimilarity)**2)
+            #self._sd = np.insert(self._sd, i, 2*(np.mean(euclidean_distances(centers, centers))/self._max_dissimilarity)**2)
+            self._sd = np.insert(self._sd, i, 2*(np.mean(func(centers, centers))/self._max_dissimilarity)**2)
         return self
 
-    def score_samples(self, X):
+    def score_samples(self, X, func):
         """
         Overriding the score_samples method.
         """
@@ -77,6 +78,7 @@ class UpdatedBRM(BRM, object):
         batch_size = 100
         for i in range(min(len(X_test), batch_size), len(X_test) + batch_size, batch_size):
             current_X_test = X_test[[j for j in range(max(0, i-batch_size), min(i, len(X_test)))]]
-            current_similarity = np.average([np.exp(-np.power(np.amin(euclidean_distances(current_X_test, self._centers[i]), axis=1)/self._max_dissimilarity, 2)/(self._sd[i])) for i in range(len(self._centers))], axis=0)
+            #current_similarity = np.average([np.exp(-np.power(np.amin(euclidean_distances(current_X_test, self._centers[i]), axis=1)/self._max_dissimilarity, 2)/(self._sd[i])) for i in range(len(self._centers))], axis=0)
+            current_similarity = np.average([np.exp(-np.power(np.amin(func(current_X_test, self._centers[i]), axis=1)/self._max_dissimilarity, 2)/(self._sd[i])) for i in range(len(self._centers))], axis=0)
             result = result + [j for j in list(map(self._evaluate, current_similarity))]
         return result
