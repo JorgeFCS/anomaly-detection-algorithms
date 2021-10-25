@@ -50,26 +50,26 @@ def open_datasets(mypath):
     df_testing = pd.DataFrame(final_doc_tst,columns = list(aux_line.split(", ")))
     return df_training,df_testing
 
-def friedman_posthoc(dataframe):
-    """
-    Friedman test with a posthoc test
-    """
-    #no usar aún, tengo un problema con llamar las columnas de los dataframes, grupo que usemos
-    f_test = friedmanchisquare(groups)
-    f_res = pd.DataFrame({'test':'Friedman','statistic':f_test[0],'pvalue':f_test[0]},index=[0])
-    wilc_test = [wilcoxon(dataframe[i],dataframe[j]) for i,j in itertools.combinations(dataframe.columns,2)]    
-    w_res = pd.DataFrame(wilc_test)
-    w_res['test'] = ["wilcoxon " + i+" vs "+j for i,j in itertools.combinations(dataframe.columns,2)]
-    return pd.concat([f_res,w_res])
-
 
 def cd_diagram(names,avranks):
     """
-    function to create cd_diagrams.
+    function to create cd_diagrams. It recieves the methods names and the values obtained as the input, it returns the 
+    cd_diagram.
     """
     names = names
     avranks = avranks
     cd = Orange.evaluation.compute_CD(avranks, 30) #tested on 30 datasets
     Orange.evaluation.graph_ranks(avranks, names, cd=cd, width=6, textspace=1.5)
     plt.show()
-    return cd
+
+cd_diagram(["first", "third", "second", "fourth" ],[1.9, 3.2, 2.8, 3.3 ])
+
+
+
+def box_plot(dataframe,column_name):
+    """
+    Function that returns a box plot. The input is the column is the data of the models after realized the friedman and posthoc method.
+    It returns the boxplot.
+    """
+    boxplot = dataframe.boxplot(column=column_name)
+    plt.show()
