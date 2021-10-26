@@ -34,12 +34,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-# POSSIBLE BACKUP
-# def get_all_dirs(path):
-#     """
-#     Function that gets all the directory names inside a given path.
-#     """
-#     dir_list = [name for name in os.listdir(path) if os.path.isdir(path+name)]
-#     return dir_list
