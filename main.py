@@ -24,13 +24,12 @@ def main():
     # Getting the list of all datasets.
     dir_list = get_all_dirs(data_base_path)
     for i in range(60):
-        print("Directory: ", dir_list[i])
-        train, test = open_datasets(data_base_path+dir_list[i]+"/")
-        print(train)
-        print(test)
-    # print("Directory: ", dir_list[4])
-    # train, test = open_datasets(data_base_path+dir_list[4]+"/")
-    # print(train)
+        #print("Directory: ", dir_list[i])
+        # Loading current dataset.
+        if(dir_list[i] == "abalone-3_vs_11"):
+            train, test = open_datasets(data_base_path+dir_list[i]+"/")
+            print(train)
+            print(test)
 
 if __name__ == '__main__':
     main()

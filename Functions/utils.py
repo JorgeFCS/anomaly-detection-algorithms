@@ -104,9 +104,9 @@ def open_datasets(path):
     files_to_read["train"] = files_to_read["test"].replace('tst', 'tra')
     # Reading files as CSV.
     train_df = pd.read_csv(files_to_read["train"], skiprows=skip_lines,
-                           names=cols)
+                           names=cols, skipinitialspace = True)
     test_df = pd.read_csv(files_to_read["test"], skiprows=skip_lines,
-                          names=cols)
+                          names=cols, skipinitialspace=True)
     return train_df, test_df
 
 def cd_diagram(names,avranks):
