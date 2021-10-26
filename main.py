@@ -28,8 +28,8 @@ def main():
         # Loading current dataset.
         if(dir_list[i] == "abalone-3_vs_11"):
             train, test = open_datasets(data_base_path+dir_list[i]+"/")
-            print(train)
-            print(test)
+            #print(train)
+            #print(test)
 
 if __name__ == '__main__':
     main()
