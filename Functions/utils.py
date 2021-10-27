@@ -13,7 +13,9 @@ import statsmodels.api as sa
 import matplotlib.pyplot as plt
 from os.path import isfile, join
 import statsmodels.formula.api as sfa
+from sklearn.metrics import roc_auc_score
 from scipy.stats import friedmanchisquare, wilcoxon
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 __author__ = "Jorge Ciprian and Alan Barlandas"
 __credits__ = ["Jorge Ciprian", "Alan Barlandas"]
@@ -108,6 +110,45 @@ def open_datasets(path):
     test_df = pd.read_csv(files_to_read["test"], skiprows=skip_lines,
                           names=cols, skipinitialspace=True)
     return train_df, test_df
+
+def prepare_datasets(train_df, test_df):
+    """
+    Function that returns the datasets as X (features) and y (target) partitions
+    with one-hot encoding, min-max scaling and standard scaling.
+    """
+    # Initializing variables.
+    minmax_scaler = MinMaxScaler()
+    standard_scaler = StandardScaler()
+    # Separating dataset into X (features) and y (target) partitions.
+    X_train = train_df.drop(['class'], axis=1)
+    y_train = train_df[['class']]
+    X_test = test_df.drop(['class'], axis=1)
+    y_test = test_df[['class']]
+    # One-hot encoding.
+    X_train_pre = pd.get_dummies(X_train)
+    X_test_pre = pd.get_dummies(X_test)
+    # Min-max scaling.
+    X_train_minmax = minmax_scaler.fit_transform(X_train_pre)
+    X_test_minmax = minmax_scaler.fit_transform(X_test_pre)
+    # Standard scaling.
+    X_train_stand = standard_scaler.fit_transform(X_train_pre)
+    X_test_stand = standard_scaler.fit_transform(X_test_pre)
+    return X_train_pre, y_train, X_test_pre, y_test, X_train_minmax, X_test_minmax, X_train_stand, X_test_stand
+
+def get_auc_score(model, X_train, y_train, X_test, y_test, distance=None):
+    """
+    Function that trains a model, evaluates it and returns the AUC score.
+    """
+    if distance is None:
+        model.fit(X_train, y_train.to_numpy().flatten())
+        y_pred = model.score_samples(X_test)
+    else:
+        model.fit(distance, X_train, y_train.to_numpy().flatten())
+        y_pred = model.score_samples(X_test, distance)
+    auc = roc_auc_score(y_test, y_pred)
+    if(auc <= 0.5):
+        auc = 1 - auc
+    return auc
 
 def cd_diagram(names,avranks):
     """

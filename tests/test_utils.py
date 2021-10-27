@@ -95,3 +95,4 @@ I, 0.165, 0.12, 0.03, 0.0215, 0.007, 0.005, 0.005, positive
     # Reading training and testing sets.
     train, test = open_datasets(temp_dir.as_posix()+"/")
     assert_frame_equal(train, ref_df, check_column_type=False)
+    assert_frame_equal(test, ref_df, check_column_type=False)
