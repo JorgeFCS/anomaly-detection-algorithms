@@ -2,7 +2,7 @@
 """Genertic utility functions that can be used in multiple parts of the code.
 """
 
-# Imports. --> Revisar que todos sean necesarios.
+
 import os
 import Orange
 import itertools
@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 from os.path import isfile, join
 import statsmodels.formula.api as sfa
 from sklearn.metrics import roc_auc_score
-from scipy.stats import friedmanchisquare, wilcoxon
+from autorank import autorank
+
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 __author__ = "Jorge Ciprian and Alan Barlandas"
@@ -23,39 +24,6 @@ __license__ = "MIT"
 __version__ = "0.1.0"
 __status__ = "Development"
 
-# def open_datasets(mypath):
-#     """
-#     Function that opens a .dat file and return the dataframe with training and testing
-#     """
-#     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-#     final_doc_tra = []
-#     final_doc_tst = []
-#     for file in onlyfiles:
-#         if "tst" in file:
-#             archive = open("{}/{}".format(mypath,file))
-#             for line in archive:
-#                 if "@attribute" in line or "@relation" in line or "@data" in line: #Avoiding not necessary lines
-#                     continue
-#                 elif "@input" in line:
-#                     aux_line = line[8:-2]
-#                     #final_doc += aux_line.strip()
-#                 elif "@output" in line:
-#                     #aux_line = aux_line + ", " + line[9:-1]
-#                     aux_line = aux_line + ", " + line[-6:-1].lower()
-#                     #print("Line position: ", line[-6:-1].lower())
-#                 else:
-#                     final_doc_tst.append(line[:-1].split(", "))
-#         elif "tra" in file:
-#             archive = open("{}/{}".format(mypath,file))
-#             for line in archive:
-#                 if line[0] == "@":
-#                     continue
-#                 else:
-#                     final_doc_tra.append(line[:-1].split(", "))
-#     print("Aux line: ", aux_line)
-#     df_training = pd.DataFrame(final_doc_tra,columns = list(aux_line.split(", ")))
-#     df_testing = pd.DataFrame(final_doc_tst,columns = list(aux_line.split(", ")))
-#     return df_training, df_testing
 
 def open_datasets(path):
     """
@@ -150,27 +118,14 @@ def get_auc_score(model, X_train, y_train, X_test, y_test, distance=None):
         auc = 1 - auc
     return auc
 
-def cd_diagram(names,avranks):
-    """
-    function to create cd_diagrams. It recieves the methods names and the values obtained as the input, it returns the
-    cd_diagram.
-    """
-    names = names
-    avranks = avranks
-    cd = Orange.evaluation.compute_CD(avranks, 30) #tested on 30 datasets --> Entiendo que esto se cambia por lo que te da Keel.
-    Orange.evaluation.graph_ranks(avranks, names, cd=cd, width=6, textspace=1.5)
-    # Hay que guardar el plot como imagen.
-    plt.show()
 
-# ESto va en un test_utils.py
-#cd_diagram(["first", "third", "second", "fourth" ],[1.9, 3.2, 2.8, 3.3 ])
-
-def box_plot(dataframe,column_name):
+def box_plot(dataframe):
     """
     Function that returns a box plot. The input is the column is the data of the models after realized the friedman and posthoc method.
     It returns the boxplot.
     """
-    boxplot = dataframe.boxplot(column=column_name)
+    boxplot = dataframe.boxplot()
+    plt.suptitle("Boxplot_methods")
     plt.show()
 
 def get_all_dirs(path):
@@ -179,3 +134,32 @@ def get_all_dirs(path):
     """
     dir_list = [name for name in os.listdir(path) if os.path.isdir(path+name)]
     return dir_list
+
+
+
+def saveCD(data, name='test', title='CD_DIAGRAM'):
+    """
+    Function that creates the CD diagram using the Friedman test and the post hoc test Nemenyi.
+    It shows the CD_diagram
+    """
+    models = list(data.model)
+    data = data.drop(columns=['model'])
+    values = data.values
+    values = values.T
+    data = pd.DataFrame(values, columns=models)
+    result = autorank(data, alpha=0.05, verbose=False)
+    print(result)
+    critical_distance = result.cd
+    rankdf = result.rankdf
+    avranks = rankdf.meanrank
+    ranks = list(avranks.values)
+    names = list(avranks.index)
+    names = names[:60]
+    avranks = ranks[:60]
+    Orange.evaluation.graph_ranks(avranks, names, cd=critical_distance, width=10, textspace=1.5, labels=True)
+    plt.suptitle(title)
+    plt.show()
+    plt.close()
+
+df1 = pd.read_csv("../Results/auc_scores_transpose.csv")
+saveCD(df1)
