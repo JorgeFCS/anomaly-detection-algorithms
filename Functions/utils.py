@@ -160,6 +160,8 @@ def saveCD(data, name='test', title='CD_DIAGRAM'):
     avranks = ranks[:60]
     Orange.evaluation.graph_ranks(avranks, names, cd=critical_distance, width=10, textspace=1.5, labels=True)
     plt.suptitle(title)
-    #plt.show()
-    #plt.close()
+    plt.show()
+    plt.close()
 
+df1 = pd.read_csv("../Results/auc_scores_transpose.csv")
+saveCD(df1)
