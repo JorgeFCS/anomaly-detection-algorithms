@@ -100,14 +100,7 @@ I, 0.165, 0.12, 0.03, 0.0215, 0.007, 0.005, 0.005, positive
     assert_frame_equal(test, ref_df, check_column_type=False)
 
 
-def test_boxplot_correct_input():
-    """
-    Testing the box_plot function with the correct dataframe input
-    """
-    cancer = load_breast_cancer()
-    df1 = pd.DataFrame(cancer.data, columns=[cancer.feature_names])
-    box_p = box_plot(df1)
-    assert type(box_p) != type(df1)
+
 
 def test_boxplot_wrong_input_string():
     """
