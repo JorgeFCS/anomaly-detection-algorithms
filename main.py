@@ -91,6 +91,11 @@ def main():
         results_df.index = indexes
         # Saving dataframe.
         results_df.to_csv("./Results/auc_scores.csv")
+    elif task == "plot":
+        print("Plot!")
+        # Aquí van las llamadas a las funciones de plot.
+    else:
+        print("Invalid task! Valid options: AUC or plot.")
 
 if __name__ == '__main__':
     main()
