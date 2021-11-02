@@ -93,10 +93,10 @@ def main():
         results_df.to_csv("./Results/auc_scores.csv")
     elif task == "plot":
         print("Plotting boxplot")
-        df_box_plot = pd.read_csv("../Results/auc_scores.csv")
+        df_box_plot = pd.read_csv("./Results/auc_scores.csv")
         box_plot(df_box_plot)
         print("Plotting CD diagram")
-        cd_diag = pd.read_csv("../Results/auc_scores_transpose.csv")
+        cd_diag = pd.read_csv("./Results/auc_scores_transpose.csv")
         saveCD(cd_diag)
     else:
         print("Invalid task! Valid options: AUC or plot.")

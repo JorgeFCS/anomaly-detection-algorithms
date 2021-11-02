@@ -129,7 +129,7 @@ def box_plot(dataframe):
     plt.title("Boxplot_methods")
     plt.xlabel("Algorithm")
     plt.ylabel("AUC score")
-    plt.savefig("../Results/boxplots.png")
+    plt.savefig("./Results/boxplots.png")
     plt.show()
     plt.close()
 
@@ -163,6 +163,6 @@ def saveCD(data, name='test', title='CD_DIAGRAM'):
     avranks = ranks[:60]
     Orange.evaluation.graph_ranks(avranks, names, cd=critical_distance, width=10, textspace=1.5, labels=True)
     plt.suptitle(title)
-    plt.savefig("../Results/CD_diagram.png")
+    plt.savefig("./Results/CD_diagram.png")
     plt.show()
     plt.close()
