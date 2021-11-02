@@ -14,7 +14,7 @@ from sklearn.ensemble import IsolationForest
 from sklearn.metrics.pairwise import euclidean_distances, cosine_distances, manhattan_distances
 # Importing custom functions and classes.
 from Classes.UpdatedBRM import UpdatedBRM
-from Functions.utils import get_all_dirs, open_datasets, prepare_datasets, get_auc_score
+from Functions.utils import box_plot, get_all_dirs, open_datasets, prepare_datasets, get_auc_score, saveCD
 
 __author__ = "Jorge Ciprian and Alan Barlandas"
 __credits__ = ["Jorge Ciprian", "Alan Barlandas"]
@@ -92,8 +92,12 @@ def main():
         # Saving dataframe.
         results_df.to_csv("./Results/auc_scores.csv")
     elif task == "plot":
-        print("Plot!")
-        # Aquí van las llamadas a las funciones de plot.
+        print("Plotting boxplot")
+        df_box_plot = pd.read_csv("../Results/auc_scores.csv")
+        box_plot(df_box_plot)
+        print("Plotting CD diagram")
+        cd_diag = pd.read_csv("../Results/auc_scores_transpose.csv")
+        saveCD(cd_diag)
     else:
         print("Invalid task! Valid options: AUC or plot.")
 
